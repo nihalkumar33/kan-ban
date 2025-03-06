@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task List Application</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Task List</h1>
+
+  <div class="input-fields">
+    <div class="task-form">
+      <input
+        type="text"
+        id="taskInput"
+        class="task-input"
+        placeholder="Add a new task..."
+        onkeypress="return recordEnterStroke(event)"
+      />
+      <button id="addButton" class="add-button" onclick="readTextFromInputField('1')">Add</button>
+    </div>
+
+    <div class="task-form">
+      <input
+        type="text"
+        id="taskInput"
+        class="task-input"
+        placeholder="Add a new task..."
+        onkeypress="return recordEnterStroke(event)"
+      />
+      <button id="addButton" class="add-button" onclick="readTextFromInputField('1')">Add</button>
+    </div>
+  </div>
+
+    <div class="self">
+      <ul id="taskList" class="task-list">
+        <li class="empty-list">
+          <div class="task-item">
+            <input type="checkbox" class="complete-checkbox" onclick="cutTheJob()">
+            <p class="task-text">The work</p>
+            <button class="delete-button">Delete</button>
+          </div>
+        </li>
+      </ul>
+
+      <div class="task-stats">
+        <span id="totalTasks">Total tasks: 0</span>
+        <span id="completedTasks">Completed: 0</span>
+      </div>
+    </div>
+  </body>
+  <script src="app.js"></script>
+</html>
