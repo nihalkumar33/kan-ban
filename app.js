@@ -116,12 +116,16 @@ function cutTheJob(ID) {
   if (triggeredTask.checked) {
       completedTaskCount += 1;
       parentDiv.querySelector("p").classList.add("task-textc")
+      // If the task is in either doing or progress it should move to done automatically
+
+
       
-  } else {
+    } else {
       completedTaskCount -= 1;
       if (completedTaskCount < 0) {
-          completedTaskCount = 0;
+        completedTaskCount = 0;
       }
+      // then I need to remove it form Done
       
       parentDiv.querySelector("p").classList.remove("task-textc")
     }
@@ -132,14 +136,15 @@ function cutTheJob(ID) {
 
 
 // Drag & Drop Logic
+let dragStartFrom;
+
 function dragStart(event) {
   event.dataTransfer.setData('text', event.target.parentElement.outerHTML); // need to understand
 
-  console.log(`from dragStart ${event.target.parentElement.outerHTML}`)
+  // console.log(`from dragStart ${event.target.parentElement.outerHTML}`)
 
   // done to specify data and type
-  setTimeout(() => event.target.parentElement.remove(), 0);
-
+  dragStartFrom = event.target.parentElement;
   // console.log(event.target.parentElement)
   // updateStats();
 }
@@ -149,22 +154,40 @@ function allowDrop(event) {
   // abhi nhi pata ki kyu use kiya tha but imp hai iske bina mera element gayab ho ja rha thaa
 }
 
-function drop(event, column) {
-//   event.preventDefault();
-  const data = event.dataTransfer.getData('text/plain');
-  document.getElementById(column + 'List').insertAdjacentHTML('afterbegin', data);
-  // data will be added on top 
-  // now till here eak baar drag and drop phir uske baad nhi
 
-  refreshDraggableItems();
-  // updateStats();
+function dropColumn(column) {
+  if (column == "backlog" || column == "inProgress" || column == "done") {
+    return true;
+
+  } else {
+    return false;
+  }
 }
 
-function refreshDraggableItems() {
-  console.log(`from drop`)
-  
+
+function drop(event, column) {
+  let correctDropLocation = dropColumn(column);
+
+  if (correctDropLocation) {
+
+    // if (column != "done") {
+    setTimeout(() => dragStartFrom.remove(), 0);
+    const data = event.dataTransfer.getData('text/plain');
+    console.log(data)
+    document.getElementById(column + 'List').insertAdjacentHTML('afterbegin', data);
+    // data will be added on top
+    // now till here eak baar drag and drop phir uske baad nhi
+    
+    refreshDraggableItems();
+    
+    // }
+
+  }
+}
+
+function refreshDraggableItems() {  
   document.querySelectorAll('.task-item').forEach(item => {
-    console.log(item.parentElement)
+    // console.log(item.parentElement)
     item.ondragstart = dragStart;
     // taki phir se drag kar paun
 
