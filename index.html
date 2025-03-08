@@ -1,33 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Task List Application</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <h1>Task List</h1>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Board - Canva Inspired</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="header">
+      <h1 class="title">Task Board</h1>
+      <button id="themeToggle" class="theme-toggle">🌙</button>
+    </div>
 
-    
-  <div class="task-form">
-    <input
-      type="text"
-      id="taskInput"
-      class="task-input"
-      placeholder="Add a new task..."
-      onkeypress="return recordEnterStroke(event)"
-    />
-    <button id="addButton" class="add-button" onclick="readTextFromInputField('1')">Add</button>
+    <div class="task-form">
+      <input type="text" id="taskInput" class="task-input" placeholder="Add a new task..." onkeypress="return recordEnterStroke(event)">
+      <button class="add-button" onclick="readTextFromInputField()">Add Task</button>
+    </div>
+
+    <div class="kanban-board">
+      <div class="kanban-column" id="backlog" ondrop="drop(event, 'backlog')" ondragover="allowDrop(event)">
+        <h2>Backlog</h2>
+        <ul id="backlogList" class="task-list"></ul>
+      </div>
+
+      <div class="kanban-column" id="inProgress" ondrop="drop(event, 'inProgress')" ondragover="allowDrop(event)">
+        <h2>In Progress</h2>
+        <ul id="inProgressList" class="task-list"></ul>
+      </div>
+
+      <div class="kanban-column" id="done" ondrop="drop(event, 'done')" ondragover="allowDrop(event)">
+        <h2>Done</h2>
+        <ul id="doneList" class="task-list"></ul>
+      </div>
+    </div>
+
+    <div class="task-stats">
+      <span id="totalTasks">Total Tasks: 0</span>
+      <span id="completedTasks">Completed: 0</span>
+    </div>
   </div>
 
-  <ul id="taskList" class="task-list"></ul>
-
-  <div class="task-stats">
-    <span id="totalTasks">Total tasks: 0</span>
-    <span id="completedTasks">Completed: 0</span>
-  </div>
-
-  </body>
   <script src="app.js"></script>
+</body>
 </html>

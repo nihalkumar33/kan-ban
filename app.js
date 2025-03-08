@@ -1,136 +1,112 @@
-let assignedTask;
 let taskCounter = 0;
 let completedTaskCount = 0;
 
-function readTextFromInputField(key) {
-    assignedTask = document.getElementById("taskInput").value;
-    
-    if (key === '1') {
-        addTaskInList();
+function readTextFromInputField() {
+  const taskInput = document.getElementById("taskInput");
+  const taskText = taskInput.value.trim();
+
+  if (taskText) {
+    addTaskToColumn('backlogList', taskText);
+    taskInput.value = '';
+    updateStats();
+  }
+}
+
+function recordEnterStroke(event) {
+  if (event.key === 'Enter') {
+    readTextFromInputField();
+  }
+}
+
+function addTaskToColumn(columnId, taskText) {
+  const taskList = document.getElementById(columnId);
+  const taskItem = createTaskItem(taskText);
+  taskList.appendChild(taskItem);
+  updateStats();
+}
+
+function createTaskItem(text) {
+  const taskItem = document.createElement('div');
+  taskItem.classList.add('task-item');
+  taskItem.draggable = true;
+  taskItem.ondragstart = dragStart;
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.onchange = () => toggleTaskCompletion(taskItem, checkbox);
+
+  const taskText = document.createElement('p');
+  taskText.classList.add('task-text');
+  taskText.innerText = text;
+
+  const deleteButton = document.createElement('button');
+  deleteButton.innerText = 'Delete';
+  deleteButton.classList.add('delete-button');
+  deleteButton.onclick = () => {
+    taskItem.parentElement.remove();
+    updateStats();
+  };
+
+  taskItem.append(checkbox, taskText, deleteButton);
+
+  const listItem = document.createElement('li');
+  listItem.appendChild(taskItem);
+  return listItem;
+}
+
+function toggleTaskCompletion(taskItem, checkbox) {
+  const taskText = taskItem.querySelector('.task-text');
+  if (checkbox.checked) {
+    taskText.classList.add('completed');
+  } else {
+    taskText.classList.remove('completed');
+  }
+  updateStats();
+}
+
+// Stats Update
+function updateStats() {
+  taskCounter = document.querySelectorAll('.task-item').length;
+  completedTaskCount = document.querySelectorAll('.task-text.completed').length;
+
+  document.getElementById("totalTasks").innerText = `Total Tasks: ${taskCounter}`;
+  document.getElementById("completedTasks").innerText = `Completed: ${completedTaskCount}`;
+}
+
+// Drag & Drop Logic
+function dragStart(event) {
+  event.dataTransfer.setData('text/plain', event.target.parentElement.outerHTML);
+  setTimeout(() => event.target.parentElement.remove(), 0);
+  updateStats();
+}
+
+function allowDrop(event) {
+  event.preventDefault();
+}
+
+function drop(event, column) {
+  event.preventDefault();
+  const data = event.dataTransfer.getData('text/plain');
+  document.getElementById(column + 'List').insertAdjacentHTML('beforeend', data);
+  refreshDraggableItems();
+  updateStats();
+}
+
+function refreshDraggableItems() {
+  document.querySelectorAll('.task-item').forEach(item => {
+    item.ondragstart = dragStart;
+
+    const checkbox = item.querySelector('input[type="checkbox"]');
+    const taskText = item.querySelector('.task-text');
+    checkbox.onchange = () => toggleTaskCompletion(item, checkbox);
+
+    if (taskText.classList.contains('completed')) {
+      checkbox.checked = true;
     }
+  });
 }
 
-function recordEnterStroke(e) {
-    if (e.key === "Enter") {
-        readTextFromInputField('0');
-        addTaskInList();
-    }
-}
-
-function addTaskInList() {
-    let unorderedListOfTasks = document.getElementById("taskList")
-    unorderedListOfTasks.classList.add("task-list")
-
-    
-    const taskItemDiv = document.createElement("div")
-    const itemCheckbox = document.createElement("input");
-    const itemP = document.createElement("p");
-    const deleteItemButton = document.createElement("button");
-    
-    taskItemDiv.classList.add("task-item")
-    
-    itemCheckbox.type = "checkbox";
-    itemCheckbox.id = generateID();
-    itemCheckbox.onclick = function() { cutTheJob(this.id) }
-    itemCheckbox.classList.add("complete-checkbox")
-    
-    itemP.classList.add("task-text")
-    itemP.innerHTML = assignedTask
-    
-    deleteItemButton.appendChild(document.createTextNode("Delete"))
-    deleteItemButton.classList.add("delete-button")
-    deleteItemButton.id = generateIDButton()
-    deleteItemButton.onclick = function() { deleteTask(this.id) }
-    
-    const li = document.createElement("li");
-    li.classList.add("empty-list")
-    
-    li.appendChild(taskItemDiv);
-    taskItemDiv.appendChild(itemCheckbox);
-    taskItemDiv.appendChild(itemP);
-    taskItemDiv.appendChild(deleteItemButton);
-
-    // Now my DOM is ready to be appended to LI
-    document.getElementById("taskList").appendChild(li);
-    // Till here adding task in list is completed
-    
-    let totalTask = countTotalTasks(1);
-    document.getElementById("totalTasks").innerHTML = `Total Tasks: ${taskCounter}`;
-}
-
-function countTotalTasks(action) {
-    if (action === 1) {
-        // for adding task
-        taskCounter += 1;
-        return taskCounter;
-    
-    } else {
-        // for deletion of task
-        taskCounter -= 1;
-        return taskCounter;
-    } 
-}
-
-
-// I may need to change this full function because I need to do add ID's dynamically
-function generateID() {
-    return Math.random().toString()
-}
-// I may need to change this full function because I need to do add ID's dynamically
-function generateIDButton() {
-    return Math.random().toString()
-}
-
-function cutTheJob(ID) {
-    let flag = false;
-    const triggeredTask = document.getElementById(ID);
-    const parentDiv = triggeredTask.parentElement
-        
-    if (triggeredTask.checked) {
-        completedTaskCount += 1;
-        parentDiv.querySelector("p").classList.add("task-textc")
-        
-        
-    } else {
-        completedTaskCount -= 1;
-        if (completedTaskCount < 0) {
-            completedTaskCount = 0;
-        }
-        
-        parentDiv.querySelector("p").classList.remove("task-textc")
-
-        // parentDiv.getElementsByClassName("task-text")
-    }
-    
-    console.log(completedTaskCount)
-    const completedTasks = document.getElementById("completedTasks");
-    completedTasks.innerHTML = `Completed: ${completedTaskCount}`
-}
-
-// Now I just need to work on Delete button 
-// So on triggering delete button 1. Get ID of button, 2. remove it's parent, 3. decrease counters
-
-function deleteTask(ID) {
-    const triggeredButton = document.getElementById(ID);
-    const liToBeDeleted = triggeredButton.parentElement.parentElement
-    liToBeDeleted.parentElement.removeChild(liToBeDeleted)
-
-    // Now to update the Total tasks and completed
-    const totalTask = document.getElementById("totalTasks")
-    const completedTasks = document.getElementById("completedTasks")
-
-    taskCounter -= 1;
-
-    completedTaskCount -= 1;
-
-    if (completedTaskCount < 0) {
-        completedTaskCount = 0;
-    }
-
-    totalTask.innerHTML = `Total Tasks: ${taskCounter}`
-    completedTasks.innerHTML = `Completed: ${completedTaskCount}`
-
-
-
-    console.log(liToBeDeleted)
-}
+document.getElementById("themeToggle").addEventListener("click", function() {
+    document.body.classList.toggle("dark-mode");
+    this.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
+  });
