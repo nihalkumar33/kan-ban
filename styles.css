@@ -184,3 +184,7 @@ body.dark-mode {
 .dark-mode .delete-button {
   background: #C62828;
 }
+
+.task-textc {
+  text-decoration: line-through;
+}

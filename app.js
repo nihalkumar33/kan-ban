@@ -8,7 +8,7 @@ function readTextFromInputField() {
   if (taskText) {
     addTaskToColumn('backlogList', taskText);
     taskInput.value = '';
-    updateStats();
+    // updateStats();
   }
 }
 
@@ -22,27 +22,30 @@ function addTaskToColumn(columnId, taskText) {
   const taskList = document.getElementById(columnId);
   const taskItem = createTaskItem(taskText);
   taskList.appendChild(taskItem);
-  updateStats();
+  // updateStats();
 }
 
 function createTaskItem(text) {
-    // here I am creating the task item (div) jiske andar 1 task hoga
+  // here I am creating the task item (div) jiske andar 1 task hoga
   const taskItem = document.createElement('div');
   taskItem.classList.add('task-item');
   taskItem.draggable = true;
   taskItem.ondragstart = dragStart;
 
+  // created an input field
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.id = generateID()
   checkbox.onclick = function() { cutTheJob(this.id) }
 
-  checkbox.onchange = (event) => toggleTaskCompletion(event);
+  // checkbox.onchange = (event) => toggleTaskCompletion(event);
 
+  // created p element
   const taskText = document.createElement('p');
   taskText.classList.add('task-text');
   taskText.innerText = text;
 
+  // created my delete button
   const deleteButton = document.createElement('button');
   deleteButton.innerText = 'Delete';
   deleteButton.id = generateIDButton();
@@ -51,9 +54,27 @@ function createTaskItem(text) {
 
   taskItem.append(checkbox, taskText, deleteButton);
 
+  // appending all of them to my li
   const listItem = document.createElement('li');
   listItem.appendChild(taskItem);
+
+  let totalTask = countTotalTasks(1);
+  document.getElementById("totalTasks").innerHTML = `Total Tasks: ${totalTask}`;
+
   return listItem;
+}
+
+function countTotalTasks(action) {
+  if (action === 1) {
+      // for adding task
+      taskCounter += 1;
+      return taskCounter;
+  
+  } else {
+      // for deletion of task
+      taskCounter -= 1;
+      return taskCounter;
+  } 
 }
 
 // I may need to change this full function because I need to do add ID's dynamically
@@ -85,8 +106,6 @@ function deleteTask(ID) {
   totalTask.innerHTML = `Total Tasks: ${taskCounter}`
   completedTasks.innerHTML = `Completed: ${completedTaskCount}`
 
-
-
   console.log(liToBeDeleted)
 }
 
@@ -99,7 +118,6 @@ function cutTheJob(ID) {
       completedTaskCount += 1;
       parentDiv.querySelector("p").classList.add("task-textc")
       
-      
   } else {
       completedTaskCount -= 1;
       if (completedTaskCount < 0) {
@@ -107,11 +125,8 @@ function cutTheJob(ID) {
       }
       
       parentDiv.querySelector("p").classList.remove("task-textc")
-
-      // parentDiv.getElementsByClassName("task-text")
-  }
+    }
   
-  console.log(completedTaskCount)
   const completedTasks = document.getElementById("completedTasks");
   completedTasks.innerHTML = `Completed: ${completedTaskCount}`
 }
@@ -125,16 +140,8 @@ function toggleTaskCompletion(event) {
     taskText.classList.remove('completed');
   }
   
-  updateStats();
-}
+  // updateStats();
 
-// Stats Update
-function updateStats() {
-  taskCounter = document.querySelectorAll('.task-item').length;
-  completedTaskCount = document.querySelectorAll('.task-text.completed').length;
-
-  document.getElementById("totalTasks").innerText = `Total Tasks: ${taskCounter}`;
-  document.getElementById("completedTasks").innerText = `Completed: ${completedTaskCount}`;
 }
 
 // Drag & Drop Logic
@@ -144,7 +151,7 @@ function dragStart(event) {
   // done to specify data and type
   setTimeout(() => event.target.parentElement.remove(), 0);
   console.log(event.target.parentElement)
-  updateStats();
+  // updateStats();
 }
 
 function allowDrop(event) {
@@ -161,7 +168,7 @@ function drop(event, column) {
 
 
   refreshDraggableItems();
-  updateStats();
+  // updateStats();
 }
 
 function refreshDraggableItems() {
