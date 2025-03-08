@@ -32,13 +32,11 @@ function createTaskItem(text) {
   taskItem.draggable = true;
   taskItem.ondragstart = dragStart;
 
-  // created an input field
+  // created a checkbox
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.id = generateID()
   checkbox.onclick = function() { cutTheJob(this.id) }
-
-  // checkbox.onchange = (event) => toggleTaskCompletion(event);
 
   // created p element
   const taskText = document.createElement('p');
@@ -90,6 +88,7 @@ function deleteTask(ID) {
   const triggeredButton = document.getElementById(ID);
   const liToBeDeleted = triggeredButton.parentElement.parentElement
   liToBeDeleted.parentElement.removeChild(liToBeDeleted)
+  console.log(liToBeDeleted)
 
   // Now to update the Total tasks and completed
   const totalTask = document.getElementById("totalTasks")
@@ -106,7 +105,7 @@ function deleteTask(ID) {
   totalTask.innerHTML = `Total Tasks: ${taskCounter}`
   completedTasks.innerHTML = `Completed: ${completedTaskCount}`
 
-  console.log(liToBeDeleted)
+  // console.log(liToBeDeleted)
 }
 
 function cutTheJob(ID) {
@@ -132,25 +131,16 @@ function cutTheJob(ID) {
 }
 
 
-function toggleTaskCompletion(event) {
-  const taskText = taskItem.querySelector('.task-text');
-  if (checkbox.checked) {
-    taskText.classList.add('completed');
-  } else {
-    taskText.classList.remove('completed');
-  }
-  
-  // updateStats();
-
-}
-
 // Drag & Drop Logic
 function dragStart(event) {
   event.dataTransfer.setData('text', event.target.parentElement.outerHTML); // need to understand
-  console.log(event.target.parentElement.outerHTML)
+
+  console.log(`from dragStart ${event.target.parentElement.outerHTML}`)
+
   // done to specify data and type
   setTimeout(() => event.target.parentElement.remove(), 0);
-  console.log(event.target.parentElement)
+
+  // console.log(event.target.parentElement)
   // updateStats();
 }
 
@@ -166,18 +156,26 @@ function drop(event, column) {
   // data will be added on top 
   // now till here eak baar drag and drop phir uske baad nhi
 
-
   refreshDraggableItems();
   // updateStats();
 }
 
 function refreshDraggableItems() {
+  console.log(`from drop`)
+  
   document.querySelectorAll('.task-item').forEach(item => {
+    console.log(item.parentElement)
     item.ondragstart = dragStart;
+    // taki phir se drag kar paun
 
     // const checkbox = item.querySelector('input[type="checkbox"]');
     // const taskText = item.querySelector('.task-text');
-    // checkbox.onchange = () => toggleTaskCompletion(item, checkbox);
+
+    const deleteButton = item.querySelector('button')
+    deleteButton.onclick = function() { deleteTask(this.id) }
+
+    const checkbox = item.querySelector('input')
+    checkbox.onclick = function() { cutTheJob(this.id) }
 
     // if (taskText.classList.contains('completed')) {
     //   checkbox.checked = true;
